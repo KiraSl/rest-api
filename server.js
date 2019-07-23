@@ -5,10 +5,10 @@ const http = require('http'),
 http.createServer((request, response) => {
   const addr = request.url; 
   const q = url.parse(addr, true);
-  const filePath = '';
+  let filePath = '';
 
   if(q.pathname.includes('documentation')) {
-    filePath = (_dirname + '/documentation.html');
+    filePath = (__dirname + '/documentation.html');
   } else {
     filePath = 'index.html';
   }
@@ -19,7 +19,7 @@ http.createServer((request, response) => {
     }
 
     response.writeHead(200);
-    response.writable(data);
+    response.write(data);
     response.end();
   });
 
