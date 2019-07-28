@@ -1,4 +1,271 @@
 <!DOCTYPE html>
-<h1> REST API </h1>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Oscar Movies API</title>
+</head>
+<body>
+  <h1>Oscar Movies API</h1>
+  <h2>API Overview</h2>
+  <p>Provides access to the information related to the movies which won in the "Best Picture" Oscar nomination. </p>
 
-<p>Stores data about 'Best Picture' Oscar winners for the last 10 years. </p>
+  <h3>MOVIES</h3>
+  <div>
+    <h4>GET /movies</h4>
+    <p>Get the list of all available movies. </p>
+    <h5>Response Data</h5>
+    <p>
+        json: 
+        [{
+        title: string, 
+        dateOfIssue: integer, 
+        directors: array[object], 
+        genres: array[string], 
+        description: string
+        }, 
+        {
+        title: string, 
+        dateOfIssue: integer, 
+        directors: array[object], 
+        genres: array[string], 
+        description: string
+        }
+        ]
+    </p>
+    <p>
+        Example:
+        [{
+          title: 'Green Book',
+          dateOfIssue: 2018,
+          directors: [
+            {
+              name: 'Peter Farrelly',
+              bio: '',
+              birthYear: 1956,
+              deathYear: null,  
+            }
+          ],
+          genres: [
+            'Biography', 
+            'Comedy', 
+            'Drama'
+            ],
+          description: 'A working-class Italian-American bouncer becomes the driver of an African-American classical pianist on a tour of venues through the 1960s American South.'
+        },
+        {
+          title: 'The Shape of Water',
+          dateOfIssue: 2017,
+          directors: [
+            {
+              name: 'Guillermo del Toro',
+              bio: '',
+              birthYear: 1964,
+              deathYear: null,
+            }
+          ],
+          genres: [
+            'Adventure', 
+            'Drama', 
+            'Fantasy'
+            ],
+          description: 'At a top secret research facility in the 1960s, a lonely janitor forms a unique relationship with an amphibious creature that is being held in captivity.'
+        }]
+    </p>
+  </div>
+
+  <div>
+      <h4>GET /movies/{title}</h4>
+      <p>Get data about a certain movie (description, date of issue, director, genre). </p>
+      <h5>Request Parameters</h5>
+      <p>title</p>
+      <h5>Response Data</h5>
+      <p>
+        json: 
+        {
+        title: string, 
+        dateOfIssue: integer, 
+        directors: array[object], 
+        genres: array[string],
+        description: string
+        }
+      </p>
+      <p>
+        Example: 
+        {
+        title: 'Green Book',
+        dateOfIssue: 2018,
+        directors: [
+          {
+            name: 'Peter Farrelly',
+            bio: '',
+            birthYear: 1956,
+            deathYear: null,  
+          }
+        ],
+        genres: [
+          'Biography', 
+          'Comedy', 
+          'Drama'
+          ],
+        description: 'A working-class Italian-American bouncer becomes the driver of an African-American classical pianist on a tour of venues through the 1960s American South.'
+        }
+      </p>
+  </div>
+
+    <div>
+      <h4>GET /genres/{name}</h4>
+      <p>Get data about a certain movie genre by it's name.</p>
+      <h5>Request Parameters</h5>
+      <p>name</p>
+      <h5>Response Data</h5>
+      <p>
+        A text message with information about the genre.
+      </p>
+
+    </div>
+
+    <div>
+        <h4>GET /directors/{name}</h4>
+        <p>Get data on a certain director (bio, birth year, death year).</p>
+        <h5>Request Parameters</h5>
+        <p>name</p>
+        <h5>Response Data</h5>
+        <p>
+            json: 
+            {
+              name: 'string',
+              bio: string,
+              birthYear: integer,
+              deathYear: integer
+            }
+        </p>
+        <p>
+            Example: 
+            {
+              name: 'Peter Farrelly',
+              bio: '',
+              birthYear: 1956,
+              deathYear: null,  
+            }
+        </p>
+    </div>
+
+  <h3>USERS</h3>
+    <div>
+      <h4>POST /account </h4>
+      <p>Allows to register a new user.</p>
+      <h5>Request Body</h5>
+      <p>object</p>
+      <p>
+        Example:
+        {
+          name: 'James Smith',
+          username: 'jsm2019',
+          password: 'strong password',
+          email: 'somename@something.com',
+          dateOfBirth: '12.05.1985'
+        }
+      </p>
+      <h5>Response Data</h5>
+      <p>object</p>
+      <p>
+        Example:
+        { 
+          id: 55,
+          name: 'James Smith',
+          username: 'jsm2019',
+          password: 'strong password',
+          email: 'somename@something.com',
+          dateOfBirth: '12.05.1985'
+        }
+      </p>
+    </div>
+
+    <div>
+      <h4>PUT /account/{id} </h4>
+      <p>Allows the user to update their account information. </p>
+      <h5>Request Parameters</h5>
+      <p>id</p>
+      <h5>Response Data</h5>
+      <p>A text message with information that was updated. </p>
+    </div>
+
+    <div>
+        <h4>GET /account/{id}/favorite/movies</h4>
+        <p>Get information about the user's favorite movies.</p>
+        <h5>Request Parameters</h5>
+        <p>id</p>
+        <h5>Response Data</h5>
+        <p>
+          json: 
+            [{
+            title: string, 
+            dateOfIssue: integer, 
+            directors: array[object], 
+            genres: array[string], 
+            description: string
+            }, 
+            {
+            title: string, 
+            dateOfIssue: integer, 
+            directors: array[object], 
+            genres: array[string], 
+            description: string
+            }
+            ]
+        </p>
+    </div>
+    <div>
+      <h4>POST /account/{id}/favorite/movies </h4>
+      <p>Allows to add a movie to their list of favorites.</p>
+      <h5>Request Parameters</h5>
+      <p>id</p>
+      <h5>Request Body</h5>
+      <p>object</p>
+      <p>
+        Example:
+        {
+          title: 'Green Book',
+          dateOfIssue: 2018,
+          directors: [
+            {
+              name: 'Peter Farrelly',
+              bio: '',
+              birthYear: 1956,
+              deathYear: null,  
+            }
+          ],
+          genres: [
+            'Biography', 
+            'Comedy', 
+            'Drama'
+            ],
+          description: 'A working-class Italian-American bouncer becomes the driver of an African-American classical pianist on a tour of venues through the 1960s American South.'
+          }
+      </p>
+      <h5>Response Data</h5>
+      <p>object</p>
+    </div>
+
+    <div>
+      <h4>DELETE /account/{id}/favorite/movies/{title} </h4>
+      <p>Allows to remove a movie from the user's list of favorites.</p>
+      <h5>Request Parameters</h5>
+      <p>id, title</p>
+      <h5>Response Data</h5>
+      <p>A text message with information that the movie was removed from the list of favorites. </p>
+    </div>
+
+    <div>
+        <h4>DELETE /account/{id} </h4>
+        <p>Allows to delete the user's account. </p>
+        <h5>Request Parameters</h5>
+        <p>id</p>
+        <h5>Response Data</h5>
+        <p>A text message with the confirmation that the account was successfully deleted. </p>
+      </div>
+</body>
+</html>
+
