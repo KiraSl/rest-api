@@ -81,9 +81,16 @@ app.get('/account/:id', function(req, res) {
     });
 });
 
-// app.get('/account/:id/favorite/movies', function(req, res) {
-//   res.send('Successful GET request returning data about favorite movies of a user');
-// });
+//Get the list of the user's favorite movies
+app.get('/account/:id/favorite/movies', function(req, res) {
+  Users.findOne({ _id: req.params.id })
+    .then(function(user) {
+      res.status(201).json(user.FavoriteMovies);
+    })
+    .catch(function(user) {
+      errorHandler(error, res);
+    });
+});
 
 //POST requests
 //Register a new user
@@ -125,7 +132,6 @@ app.post('/account/:id/favorite/movies/:movieid', function(req, res) {
     .catch(function(error) {
       errorHandler(error, res);
     });
-  //res.send('Successful POST request adding a movie to the user\'s list of favorite movies');
 });
 
 //PUT requests
