@@ -92,7 +92,7 @@ app.get('/account/:id/favorite/movies', function(req, res) {
     });
 });
 
-//POST requests
+//POST REQUESTS
 //Register a new user
 app.post('/account', function(req, res) {
   Users.findOne({ Username: req.body.Username })
@@ -134,7 +134,7 @@ app.post('/account/:id/favorite/movies/:movieid', function(req, res) {
     });
 });
 
-//PUT requests
+//PUT REQUESTS
 //Allow the user to update profile information
 app.put('/account/:id', function(req, res) {
   Users.findOneAndUpdate(
@@ -150,11 +150,21 @@ app.put('/account/:id', function(req, res) {
     });
 });
 
-// //DELETE requests
+// //DELETE REQUESTS
 //Remove a movie from the user's list of favorite movies
-// app.delete('/account/:id/favorite/movies/:title', function(req, res) {
-//   res.send('Successful DELETE request removing a movie from the user\'s list of favorite movies');
-// });
+app.delete('/account/:id/favorite/movies/:movieid', function(req, res) {
+  Users.findOneAndUpdate(
+    { _id: req.params.id },
+    { $pull: { FavoriteMovies: req.params.movieid } },
+    { new: true }
+  )
+    .then(function(user) {
+      res.status(201).json(user);
+    })
+    .catch(function(error) {
+      errorHandler(error, res);
+    });
+});
 
 //Delete the user profile
 app.delete('/account/:id', function(req, res) {
