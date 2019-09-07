@@ -247,4 +247,8 @@ function errorHandler(error, res) {
   res.status(500).send(`Error: ${error}`);
 }
 
-app.listen(8080);
+//Looks for a pre-configured port number; if nothing found - sets the port to 3000
+let port = process.env.PORT || 3000;
+app.listen(port, '0.0.0.0', function() {
+  console.log('Listening on Port 3000');
+});
