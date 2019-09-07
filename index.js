@@ -9,8 +9,12 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 app.use(express.static('public'));
-app.use(bodyParser.json());
 app.use(morgan('common'));
+app.use(bodyParser.json());
+const auth = require('./auth')(app); //app argument ensures that Express is available also in auth.js file
+const passport = require('passport');
+require('./passport.js');
+
 app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send('Something broke!');
@@ -23,52 +27,75 @@ mongoose.connect('mongodb://localhost:27017/myFlixDB', {
 
 //GET REQUESTS
 //Get all movies
-app.get('/movies', function(req, res) {
+app.get('/movies', passport.authenticate('jwt', { session: false }), function(
+  req,
+  res
+) {
   Movies.find()
     .then(movies => res.json(movies))
     .catch(error => errorHandler(error, res));
 });
 
 //Get a movie by Title
-app.get('/movies/:title', function(req, res) {
-  Movies.findOne({ Title: req.params.title })
-    .then(movie => res.json(movie))
-    .catch(error => errorHandler(error, res));
-});
+app.get(
+  '/movies/:title',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Movies.findOne({ Title: req.params.title })
+      .then(movie => res.json(movie))
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 //Get genre info by Title
-app.get('/genres/:title', function(req, res) {
-  Movies.findOne({ 'Genre.Title': req.params.title })
-    .then(movie => res.json(movie.Genre))
-    .catch(error => errorHandler(error, res));
-});
+app.get(
+  '/genres/:title',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Movies.findOne({ 'Genre.Title': req.params.title })
+      .then(movie => res.json(movie.Genre))
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 //Get info about a director by name
-app.get('/directors/:name', function(req, res) {
-  Movies.findOne({ 'Director.Name': req.params.name })
-    .then(movie => res.json(movie.Director))
-    .catch(error => errorHandler(error, res));
-});
+app.get(
+  '/directors/:name',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Movies.findOne({ 'Director.Name': req.params.name })
+      .then(movie => res.json(movie.Director))
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 //Get user by id
-app.get('/account/:id', function(req, res) {
-  Users.findOne({ _id: req.params.id })
-    .then(user => {
-      if (!user) {
-        res.status(404).send('User not found.');
-      } else {
-        res.status(201).json(user);
-      }
-    })
-    .catch(error => errorHandler(error, res));
-});
+app.get(
+  '/account/:id',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Users.findOne({ _id: req.params.id })
+      .then(user => {
+        if (!user) {
+          res.status(404).send('User not found.');
+        } else {
+          res.status(201).json(user);
+        }
+      })
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 //Get the list of the user's favorite movies
-app.get('/account/:id/favorite/movies', function(req, res) {
-  Users.findOne({ _id: req.params.id })
-    .then(user => res.status(201).json(user.FavoriteMovies))
-    .catch(error => errorHandler(error, res));
-});
+app.get(
+  '/account/:id/favorite/movies',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Users.findOne({ _id: req.params.id })
+      .then(user => res.status(201).json(user.FavoriteMovies))
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 //POST REQUESTS
 //Register a new user
@@ -92,52 +119,70 @@ app.post('/account', function(req, res) {
 });
 
 //Add a movie to the user's list of favourite movies
-app.post('/account/:id/favorite/movies/:movieId', function(req, res) {
-  Users.findOneAndUpdate(
-    { _id: req.params.id },
-    { $push: { FavoriteMovies: req.params.movieId } },
-    { new: true }
-  )
-    .then(user => res.status(201).json(user))
-    .catch(error => errorHandler(error, res));
-});
+app.post(
+  '/account/:id/favorite/movies/:movieId',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Users.findOneAndUpdate(
+      { _id: req.params.id },
+      { $push: { FavoriteMovies: req.params.movieId } },
+      { new: true }
+    )
+      .then(user => res.status(201).json(user))
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 //PUT REQUESTS
 //Allow the user to update profile information
-app.put('/account/:id', function(req, res) {
-  Users.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: req.body },
-    { new: true }
-  )
-    .then(user => res.status(201).json(user))
-    .catch(error => errorHandler(error, res));
-});
+app.put(
+  '/account/:id',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Users.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: req.body },
+      { new: true }
+    )
+      .then(user => res.status(201).json(user))
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 // //DELETE REQUESTS
 //Remove a movie from the user's list of favorite movies
-app.delete('/account/:id/favorite/movies/:movieId', function(req, res) {
-  Users.findOneAndUpdate(
-    { _id: req.params.id },
-    { $pull: { FavoriteMovies: req.params.movieId } },
-    { new: true }
-  )
-    .then(user => res.status(201).json(user))
-    .catch(error => errorHandler(error, res));
-});
+app.delete(
+  '/account/:id/favorite/movies/:movieId',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Users.findOneAndUpdate(
+      { _id: req.params.id },
+      { $pull: { FavoriteMovies: req.params.movieId } },
+      { new: true }
+    )
+      .then(user => res.status(201).json(user))
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 //Delete the user profile
-app.delete('/account/:id', function(req, res) {
-  Users.findOneAndRemove({ _id: req.params.id })
-    .then(user => {
-      if (!user) {
-        res.status(404).send('User not found.');
-      } else {
-        res.status(200).send(`${user.Username} has been successfully deleted.`);
-      }
-    })
-    .catch(error => errorHandler(error, res));
-});
+app.delete(
+  '/account/:id',
+  passport.authenticate('jwt', { session: false }),
+  function(req, res) {
+    Users.findOneAndRemove({ _id: req.params.id })
+      .then(user => {
+        if (!user) {
+          res.status(404).send('User not found.');
+        } else {
+          res
+            .status(200)
+            .send(`${user.Username} has been successfully deleted.`);
+        }
+      })
+      .catch(error => errorHandler(error, res));
+  }
+);
 
 function errorHandler(error, res) {
   console.error(error);
