@@ -32,6 +32,11 @@ mongoose.connect('mongodb://localhost:27017/myFlixDB', {
 });
 
 //GET REQUESTS
+
+app.get('/', (req, res) => {
+  return res.send("Kira's lovely little app");
+});
+
 //Get all movies
 app.get('/movies', passport.authenticate('jwt', { session: false }), function(
   req,
