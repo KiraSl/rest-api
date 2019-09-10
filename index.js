@@ -21,7 +21,7 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use(function(err, req, res) {
+app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
