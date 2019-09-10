@@ -21,15 +21,18 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
 
 //Connect Mongoose to the database
-mongoose.connect('mongodb://localhost:27017/myFlixDB', {
-  useNewUrlParser: true
-});
+mongoose.connect(
+  'mongodb+srv://myFlixDBadmin:myFlix2019@myflixdb-zhsvo.mongodb.net/myFlixDB?retryWrites=true&w=majority',
+  {
+    useNewUrlParser: true
+  }
+);
 
 //GET REQUESTS
 
